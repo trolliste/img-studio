@@ -19,6 +19,12 @@ export const pages = {
     href: '/generate',
     status: 'true',
   },
+  Generate3D: {
+    name: 'Generate 3D',
+    description: 'Generate a 3D presentation video with images of the object',
+    href: '/generate-three-dee',
+    status: 'true',
+  },
   Edit: {
     name: 'Edit',
     description: 'Import, edit and transform existing content',
