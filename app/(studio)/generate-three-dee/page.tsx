@@ -114,6 +114,7 @@ export default function Generate3DPage() {
   async function onSubmit(formData: Generate3DFormData) {
     setIsLoading(true)
     setError(undefined)
+    setGeneratedVideos([])
     try {
       const result = await generate3DAnimation(formData, appContext)
       if ('error' in result) {
