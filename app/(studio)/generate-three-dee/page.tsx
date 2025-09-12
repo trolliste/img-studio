@@ -60,6 +60,8 @@ export default function Generate3DPage() {
     setGeneratedVideos([])
     setError(undefined)
     animation3DGenerationUtils.resetableFields.forEach((field) => resetField(field))
+    stopPolling()
+    setIsLoading(false)
   }
 
   function stopPolling() {
