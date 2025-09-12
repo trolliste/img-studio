@@ -27,7 +27,7 @@ export default function ImagesDropzone({ images, onImages, max = 3 }: ImagesDrop
       setDropError(error)
       return
     }
-    console.log('AcceptedFiles', acceptedFiles)
+
     const base64Files: ReferenceImage[] = await Promise.all(acceptedFiles.map(async (file) => {
       const base64 = await fileToBase64(file)
       const newImage = `data:${file.type};base64,${base64}`

@@ -41,6 +41,7 @@ export async function generate3DAnimation(
   const location = 'us-central1'
   const projectId = process.env.NEXT_PUBLIC_PROJECT_ID
 
+  // TODO: Using a mock server to avoid calling real generate API, must be fixed when ready
   // const videoAPIUrl = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/${modelVersion}:predictLongRunning`
   const videoAPIUrl = `http://localhost:5000/v1/projects/${projectId}/locations/${location}/publishers/google/models/${modelVersion}/predictLongRunning`
 
@@ -53,7 +54,6 @@ export async function generate3DAnimation(
   }
   const generationGcsURI = `${appContext.gcsURI}/${appContext.userID}/generated-videos`
 
-  // TODO: Some parameters must be taken from formData
   const parameters = {
     sampleCount: parseInt(formData.sampleCount, 10),
     aspectRatio: formData.aspectRatio,
@@ -64,8 +64,6 @@ export async function generate3DAnimation(
     resolution: formData.resolution,
     enhancePrompt: true,
   }
-
-  console.log('Parameters are', JSON.stringify(parameters, null, 2))
 
   const reqData = {
     instances: [
@@ -126,6 +124,7 @@ export async function getAnimation3DGenerationStatus(
   const location = parts[3]
   const modelId = parts[7]
 
+  // TODO: Using a mock server to avoid calling real generate API, must be fixed when ready
   // const pollingAPIUrl = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/${modelId}:fetchPredictOperation`
   const pollingAPIUrl = `http://localhost:5000/v1/projects/${projectId}/locations/${location}/publishers/google/models/${modelId}/fetchPredictOperation`
 

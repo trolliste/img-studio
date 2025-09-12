@@ -82,8 +82,6 @@ export default function Generate3DPage() {
     try {
       const result = await getAnimation3DGenerationStatus(operationName, formData, prompt, appContext)
 
-      console.log(`result after Polling n°${pollingAttemptsRef.current} :`, result)
-
       if (result.done) {
         if (result.error) {
           console.error('Get generation status succeed but returned errors')
