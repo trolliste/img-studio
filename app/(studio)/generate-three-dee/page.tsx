@@ -134,6 +134,7 @@ export default function Generate3DPage() {
   }
 
   const images = watch('images')
+  const sampleCount = watch('sampleCount')
 
   if (appContext?.isLoading === true) {
     return (
@@ -247,7 +248,7 @@ export default function Generate3DPage() {
             <OutputVideosDisplay
               isLoading={isLoading}
               generatedVideosInGCS={generatedVideos}
-              generatedCount={4}
+              generatedCount={parseInt(sampleCount)}
             />
           </Grid>
         </Grid>
