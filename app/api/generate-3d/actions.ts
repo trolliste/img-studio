@@ -10,7 +10,8 @@ type GaxiosMethod = "POST" | "GET" | "HEAD" | "DELETE" | "PUT" | "CONNECT" | "OP
 
 const customRateLimitMessage = 'Oops, too many incoming access right now, please try again later!'
 const modelVersion = 'veo-2.0-generate-exp' // For now only this model is compatible with image references
-const basePrompt = 'A slow, 360-degree orbit shot of this object'
+// const basePrompt = 'A full 360-degree orbit shot of this object making a complete clockwise rotation'
+const basePrompt = 'A 90° rotation to the right (not to the left), do not add any extra animations, do not add any extra objects, do not add any extra texts'
 
 function generatePrompt(formData: Generate3DFormData) {
   const additionalPromptFields = animation3DGenerationUtils.fullPromptFields.reduce<string>((acc, field) => {
@@ -42,8 +43,8 @@ export async function generate3DAnimation(
   const projectId = process.env.NEXT_PUBLIC_PROJECT_ID
 
   // TODO: Using a mock server to avoid calling real generate API, must be fixed when ready
-  // const videoAPIUrl = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/${modelVersion}:predictLongRunning`
-  const videoAPIUrl = `http://localhost:5000/v1/projects/${projectId}/locations/${location}/publishers/google/models/${modelVersion}/predictLongRunning`
+  const videoAPIUrl = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/${modelVersion}:predictLongRunning`
+  // const videoAPIUrl = `http://localhost:5000/v1/projects/${projectId}/locations/${location}/publishers/google/models/${modelVersion}/predictLongRunning`
 
   const fullPrompt = generatePrompt(formData)
 
@@ -125,8 +126,8 @@ export async function getAnimation3DGenerationStatus(
   const modelId = parts[7]
 
   // TODO: Using a mock server to avoid calling real generate API, must be fixed when ready
-  // const pollingAPIUrl = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/${modelId}:fetchPredictOperation`
-  const pollingAPIUrl = `http://localhost:5000/v1/projects/${projectId}/locations/${location}/publishers/google/models/${modelId}/fetchPredictOperation`
+  const pollingAPIUrl = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/${modelId}:fetchPredictOperation`
+  // const pollingAPIUrl = `http://localhost:5000/v1/projects/${projectId}/locations/${location}/publishers/google/models/${modelId}/fetchPredictOperation`
 
   const method: GaxiosMethod = 'POST'
 

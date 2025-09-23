@@ -20,8 +20,8 @@ export const pages = {
     status: 'true',
   },
   Generate3D: {
-    name: 'Generate 3D',
-    description: 'Generate a 3D presentation video with images of the object',
+    name: 'Generate 360',
+    description: 'Generate an orbit presentation video from images of the object',
     href: '/generate-three-dee',
     status: 'true',
   },
