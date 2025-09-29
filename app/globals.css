@@ -21,4 +21,6 @@
 @import '@fontsource/roboto/900.css'; /* Black 900 */
 @import '@fontsource/roboto/500.css'; /* Medium 500 */
 
-
+html, body {
+  height: 100%;
+}

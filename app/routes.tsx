@@ -19,6 +19,12 @@ export const pages = {
     href: '/generate',
     status: 'true',
   },
+  NanoBanana: {
+    name: 'Nano Banana',
+    description: 'Generate images with the powerful Nano Banana',
+    href: '/nano-banana',
+    status: 'true',
+  },
   Edit: {
     name: 'Edit',
     description: 'Import, edit and transform existing content',

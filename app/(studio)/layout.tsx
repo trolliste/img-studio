@@ -19,7 +19,7 @@ import Box from '@mui/material/Box'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', height: '100%' }}>
       <SideNav />
       {children}
     </Box>
