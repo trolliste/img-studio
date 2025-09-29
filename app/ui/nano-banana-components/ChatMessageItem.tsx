@@ -60,7 +60,9 @@ export default function ChatMessageItem({ item }: ChatMessageItemProps) {
           {part.text}
         </Typography>
       ))}
-      {((imageParts && imageParts.length) ?? 0) > 0 && <ImageGallery images={imageParts ?? []} openable />}
+      {((imageParts && imageParts.length) ?? 0) > 0 && (
+        <ImageGallery images={imageParts ?? []} openable displayActions />
+      )}
     </Box>
   )
 }

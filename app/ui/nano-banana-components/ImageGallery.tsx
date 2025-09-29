@@ -1,20 +1,9 @@
 import { AssetImages } from '@/app/api/nano-banana/nano-banana.types'
 import theme from '@/app/theme'
-import { Close, Download } from '@mui/icons-material'
-import {
-  Avatar,
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Modal,
-} from '@mui/material'
-import NextImage from 'next/image'
+import { Add, Close, Download } from '@mui/icons-material'
+import { Avatar, Box, Dialog, DialogContent, DialogTitle, IconButton, Stack } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { CustomizedAvatarButton, CustomizedIconButton, CustomizedSendButton } from '../ux-components/Button-SX'
+import { CustomizedAvatarButton, CustomizedIconButton } from '../ux-components/Button-SX'
 import { CustomWhiteTooltip } from '../ux-components/Tooltip'
 
 export type ImageGalleryProps = {
@@ -23,6 +12,7 @@ export type ImageGalleryProps = {
   onClear?: (image: AssetImages) => void
   openable?: boolean
   onImageOpen?: (image: AssetImages) => void
+  displayActions?: boolean
 }
 
 type ImageGalleryViewerDialogProps = {
@@ -151,6 +141,7 @@ export default function ImageGallery({
   clearable = false,
   onClear = () => {},
   openable = false,
+  displayActions = false,
 }: ImageGalleryProps) {
   const [openImageDialog, setOpenImageDialog] = useState<boolean>(false)
   const [selectedImage, setSelectedImage] = useState<AssetImages | undefined>(undefined)
@@ -181,16 +172,20 @@ export default function ImageGallery({
       {images.map((image) => (
         <Box
           key={image.id}
+          tabIndex={0}
           sx={[
             {
               flex: 1,
               height: '100%',
               overflow: 'hidden',
             },
-            clearable && { position: 'relative' },
+            (clearable || displayActions) && { position: 'relative' },
+            displayActions && {
+              '&:hover .image-actions': { visibility: 'visible' },
+            },
           ]}
         >
-          {clearable && (
+          {!displayActions && clearable && (
             <IconButton
               sx={{
                 position: 'absolute',
@@ -205,6 +200,31 @@ export default function ImageGallery({
             >
               <Close sx={{ fontSize: '16px' }} />
             </IconButton>
+          )}
+          {!clearable && displayActions && (
+            <Stack
+              className="image-actions"
+              sx={{
+                position: 'absolute',
+                right: '10px',
+                top: '10px',
+                visibility: 'hidden',
+                display: 'flex',
+                flexDirection: 'row',
+                gap: 1,
+              }}
+            >
+              <IconButton
+                tabIndex={0}
+                sx={{
+                  backgroundColor: theme.palette.background.default,
+                  '&:hover': { backgroundColor: theme.palette.background.default },
+                }}
+                onClick={() => handleImageAction('download', image)}
+              >
+                <Download sx={{ fontSize: '14px' }} />
+              </IconButton>
+            </Stack>
           )}
           {!openable && (
             <img
