@@ -1,4 +1,4 @@
-import { Box, CircularProgress, SxProps, Theme, Typography } from '@mui/material'
+import { Alert, Box, CircularProgress, SxProps, Theme, Typography } from '@mui/material'
 import { ChatMessageContent } from '@/app/api/nano-banana/nano-banana.types'
 import ChatMessageItem from './ChatMessageItem'
 import { Construction } from '@mui/icons-material'
@@ -8,9 +8,10 @@ export type ChatAreaProps = {
   sx?: SxProps<Theme>
   contents: ChatMessageContent[]
   generating?: boolean
+  error?: string
 }
 
-export default function ChatArea({ sx = [], generating = false, contents }: ChatAreaProps) {
+export default function ChatArea({ sx = [], generating = false, contents, error }: ChatAreaProps) {
   const chatAreaEndRef = useRef<HTMLDivElement | null>(null)
 
   function scollBottom() {
@@ -21,7 +22,7 @@ export default function ChatArea({ sx = [], generating = false, contents }: Chat
 
   useEffect(() => {
     scollBottom()
-  }, [contents])
+  }, [contents, error])
 
   useEffect(() => {
     if (generating) {
@@ -45,6 +46,7 @@ export default function ChatArea({ sx = [], generating = false, contents }: Chat
         <ChatMessageItem key={index} item={content} />
       ))}
       {generating && <CircularProgress size="20px" color="secondary" />}
+      {error && <Alert severity="error">{error}</Alert>}
       <div ref={chatAreaEndRef}></div>
     </Box>
   )

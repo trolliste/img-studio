@@ -111,7 +111,7 @@ export default function ChatPromptInput({ onPrompt, sx = [] }: ChatPromptInputPr
         }}
       />
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <ImageGallery images={images} clearable onClear={onClearClicked} />
+        <ImageGallery images={images} clearable onClear={onClearClicked} dense />
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'end' }}>
           <Stack sx={{ display: 'flex', flexDirection: 'row' }}>
             <CustomTooltip title="Add assets (photos)" size="small">

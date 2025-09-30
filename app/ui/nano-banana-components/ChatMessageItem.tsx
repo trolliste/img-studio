@@ -1,68 +1,80 @@
-import { AssetImages, ChatMessageContent, ChatMessageRole } from '@/app/api/nano-banana/nano-banana.types'
+import { ChatMessageContent, ChatMessageRole } from '@/app/api/nano-banana/nano-banana.types'
 import theme from '@/app/theme'
 import { Blob, Part } from '@google/genai'
 import { Box, Typography } from '@mui/material'
-import Image from 'next/image'
 import ImageGallery from './ImageGallery'
 
 export type ChatMessageItemProps = {
   item: ChatMessageContent
 }
 
-const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg']
+const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp']
 
 export default function ChatMessageItem({ item }: ChatMessageItemProps) {
   function toBase64Image(image: Blob) {
     return `data:${image.mimeType};base64,${image.data}`
   }
 
-  const imageParts = item.parts?.reduce<AssetImages[]>((acc, part) => {
-    if (ALLOWED_IMAGE_TYPES.includes(part?.inlineData?.mimeType ?? 'unknown')) {
-      console.log('part', part)
-      return [
-        ...acc,
-        {
-          id: crypto.randomUUID(),
-          fileName: part.inlineData?.displayName ?? '',
-          base64: toBase64Image(part.inlineData as Blob),
-          rawBase64: part.inlineData?.data ?? '',
-          fileType: part.inlineData?.mimeType ?? '',
-        },
-      ]
-    }
-    return acc
-  }, [])
-
-  const textParts = item.parts?.filter((part) => part.text !== undefined && part.text !== null && part.text !== '')
-
   return (
     <Box
       sx={[
         {
-          p: 2,
           display: 'flex',
-          flexDirection: 'column',
-          border: 1,
-          borderColor: theme.palette.secondary.light,
-          borderRadius: '5px',
-          borderStyle: 'dashed',
         },
-        item.role === ChatMessageRole.USER ? { alignItems: 'end' } : { alignItems: 'start' },
+        item.role === ChatMessageRole.USER ? { justifyContent: 'flex-end' } : { justifyContent: 'flex-start' },
       ]}
     >
-      {textParts?.map((part, index) => (
-        <Typography
-          key={index}
-          pb={textParts.length === 1 && (imageParts?.length ?? 0) === 0 ? 0 : 2}
-          sx={{ whiteSpace: 'pre-wrap' }}
-          fontSize="14px"
+      <Box
+        sx={[
+          {
+            display: 'flex',
+            maxWidth: '80%',
+            flexDirection: 'column',
+          },
+          item.role === ChatMessageRole.USER ? { alignItems: 'flex-end' } : { alignItems: 'flex-start' },
+        ]}
+      >
+        <Box
+          sx={[
+            {
+              border: 1,
+              borderColor: theme.palette.secondary.light,
+              borderRadius: '5px',
+              boxShadow: 2,
+              p: 2,
+            },
+            item.role === ChatMessageRole.USER && { backgroundColor: '#f6f6f6ff' },
+          ]}
         >
-          {part.text}
-        </Typography>
-      ))}
-      {((imageParts && imageParts.length) ?? 0) > 0 && (
-        <ImageGallery images={imageParts ?? []} openable displayActions />
-      )}
+          {item.parts?.map((part, index) => {
+            if (part.text !== undefined && part.text !== null && part.text !== '') {
+              return (
+                <Typography key={index} pb={2} sx={{ whiteSpace: 'pre-wrap' }} fontSize="14px">
+                  {part.text}
+                </Typography>
+              )
+            }
+            if (part.inlineData && ALLOWED_IMAGE_TYPES.includes(part.inlineData.mimeType ?? 'unknown')) {
+              const image = {
+                id: crypto.randomUUID(),
+                fileName: '',
+                base64: toBase64Image(part.inlineData as Blob),
+                rawBase64: part.inlineData.data ?? '',
+                fileType: part.inlineData.mimeType ?? '',
+                genImage: part.genImage,
+              }
+              return (
+                <ImageGallery
+                  key={image.id}
+                  images={[image]}
+                  openable
+                  displayActions={item.role === ChatMessageRole.MODEL}
+                />
+              )
+            }
+          })}
+        </Box>
+      </Box>
     </Box>
   )
 }

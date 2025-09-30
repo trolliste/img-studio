@@ -136,16 +136,14 @@ export default function DownloadDialog({
       open={open}
       onClose={onClose}
       aria-describedby="parameter the upscale of the media"
-      slotProps={{
-        transition: Transition,
-        paper: {
-          sx: {
-            p: 1,
-            cursor: 'pointer',
-            borderRadius: 1,
-            background: 'white',
-            maxWidth: '350px',
-          },
+      TransitionComponent={Transition}
+      PaperProps={{
+        sx: {
+          p: 1,
+          cursor: 'pointer',
+          borderRadius: 1,
+          background: 'white',
+          maxWidth: '350px',
         },
       }}
     >

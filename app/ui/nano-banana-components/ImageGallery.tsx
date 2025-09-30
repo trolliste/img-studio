@@ -5,6 +5,8 @@ import { Avatar, Box, Dialog, DialogContent, DialogTitle, IconButton, Stack } fr
 import { useEffect, useState } from 'react'
 import { CustomizedAvatarButton, CustomizedIconButton } from '../ux-components/Button-SX'
 import { CustomWhiteTooltip } from '../ux-components/Tooltip'
+import DownloadDialog from '../transverse-components/DownloadDialog'
+import { ImageI } from '@/app/api/generate-image-utils'
 
 export type ImageGalleryProps = {
   images: AssetImages[]
@@ -13,12 +15,14 @@ export type ImageGalleryProps = {
   openable?: boolean
   onImageOpen?: (image: AssetImages) => void
   displayActions?: boolean
+  dense?: boolean
 }
 
 type ImageGalleryViewerDialogProps = {
   image: AssetImages
   open: boolean
   setOpen: (open: boolean) => void
+  displayActions?: boolean
   onAction: (type: 'download' | 'export', image: AssetImages) => void
 }
 
@@ -39,17 +43,13 @@ async function getImageDimension(base64: string): Promise<ImageDimension> {
   })
 }
 
-function downloadBase64File(image: AssetImages) {
-  const downloadLink = document.createElement('a')
-  const extension = image.fileType.replace('image/', '').toLocaleLowerCase()
-  downloadLink.href = image.base64
-  downloadLink.download = `${image.id}.${extension}`
-  document.body.appendChild(downloadLink)
-  downloadLink.click()
-  document.body.removeChild(downloadLink)
-}
-
-function ImageGalleryViewerDialog({ image, open, setOpen, onAction }: ImageGalleryViewerDialogProps) {
+function ImageGalleryViewerDialog({
+  image,
+  open,
+  setOpen,
+  displayActions = false,
+  onAction,
+}: ImageGalleryViewerDialogProps) {
   const [dimension, setDimension] = useState<ImageDimension | undefined>(undefined)
   const [zoomed, setZoomed] = useState<boolean>(false)
 
@@ -91,18 +91,20 @@ function ImageGalleryViewerDialog({ image, open, setOpen, onAction }: ImageGalle
         >
           Image dimension : {dimension.width} x {dimension.height}
           <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-            <CustomWhiteTooltip title="Download locally" size="small">
-              <IconButton
-                onClick={() => onAction('download', image)}
-                aria-label="Download image"
-                sx={{ pr: 1, pl: 0.2, zIndex: 10 }}
-                disableRipple
-              >
-                <Avatar sx={CustomizedAvatarButton}>
-                  <Download sx={CustomizedIconButton} />
-                </Avatar>
-              </IconButton>
-            </CustomWhiteTooltip>
+            {displayActions && (
+              <CustomWhiteTooltip title="Download locally" size="small">
+                <IconButton
+                  onClick={() => onAction('download', image)}
+                  aria-label="Download image"
+                  sx={{ pr: 1, pl: 0.2, zIndex: 10 }}
+                  disableRipple
+                >
+                  <Avatar sx={CustomizedAvatarButton}>
+                    <Download sx={CustomizedIconButton} />
+                  </Avatar>
+                </IconButton>
+              </CustomWhiteTooltip>
+            )}
             <CustomWhiteTooltip title="Close image" size="small">
               <IconButton
                 onClick={() => handleClose()}
@@ -142,9 +144,12 @@ export default function ImageGallery({
   onClear = () => {},
   openable = false,
   displayActions = false,
+  dense = false,
 }: ImageGalleryProps) {
   const [openImageDialog, setOpenImageDialog] = useState<boolean>(false)
+  const [openDownloadDialog, setOpenDownloadDialog] = useState<boolean>(false)
   const [selectedImage, setSelectedImage] = useState<AssetImages | undefined>(undefined)
+  const [imageToDL, setImageToDL] = useState<ImageI | undefined>(undefined)
 
   function onClearHandler(image: AssetImages) {
     onClear && onClear(image)
@@ -157,9 +162,17 @@ export default function ImageGallery({
 
   function handleImageAction(action: 'download' | 'export', image: AssetImages) {
     if (action === 'download') {
-      downloadBase64File(image)
+      setOpenDownloadDialog(true)
+      setImageToDL(image.genImage)
     }
   }
+
+  function handleCloseDownloadDialog() {
+    setOpenDownloadDialog(false)
+    setImageToDL(undefined)
+  }
+
+  const imageSize = dense ? '25vh' : '50vh'
 
   return (
     <Box
@@ -230,14 +243,19 @@ export default function ImageGallery({
             <img
               alt={`Image ${image.fileName}`}
               src={image.base64}
-              style={{ objectFit: 'contain', maxHeight: 'min(25vh, 358px)', maxWidth: '100%' }}
+              style={{ objectFit: 'contain', maxHeight: `min(${imageSize}, 358px)`, maxWidth: '100%' }}
             />
           )}
           {openable && (
             <img
               alt={`Image ${image.fileName}`}
               src={image.base64}
-              style={{ objectFit: 'contain', maxHeight: 'min(25vh, 358px)', maxWidth: '100%', cursor: 'pointer' }}
+              style={{
+                objectFit: 'contain',
+                maxHeight: `min(${imageSize}, 358px)`,
+                maxWidth: '100%',
+                cursor: 'pointer',
+              }}
               role="button"
               onClick={() => onOpenHandler(image)}
             />
@@ -250,6 +268,14 @@ export default function ImageGallery({
           open={openImageDialog}
           setOpen={setOpenImageDialog}
           onAction={handleImageAction}
+          displayActions={displayActions}
+        />
+      )}
+      {displayActions && !clearable && imageToDL && (
+        <DownloadDialog
+          open={openDownloadDialog}
+          mediaToDL={imageToDL}
+          handleMediaDLClose={() => handleCloseDownloadDialog()}
         />
       )}
     </Box>

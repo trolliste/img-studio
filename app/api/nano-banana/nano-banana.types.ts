@@ -1,12 +1,17 @@
 import { Part } from '@google/genai'
+import { ImageI } from '../generate-image-utils'
 
 export enum ChatMessageRole {
   USER = 'user',
   MODEL = 'model',
 }
 
+export type ChatMessagePart = Part & {
+  genImage?: ImageI
+}
+
 export type ChatMessageContent = {
-  parts?: Part[]
+  parts?: ChatMessagePart[]
   role?: ChatMessageRole
 }
 
@@ -16,4 +21,5 @@ export type AssetImages = {
   base64: string
   fileType: string
   rawBase64: string
+  genImage?: ImageI
 }
